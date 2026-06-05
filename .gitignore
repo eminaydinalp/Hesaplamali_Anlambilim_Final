@@ -1,0 +1,47 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment and local secrets
+.env
+.env.*
+!.env.example
+
+# Build and packaging artifacts
+build/
+dist/
+*.egg-info/
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# Experiment artifacts
+data/*
+!data/.gitkeep
+models/*
+!models/.gitkeep
+results/*
+!results/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# Model checkpoints and large ML artifacts
+*.ckpt
+*.pt
+*.pth
+*.safetensors
+*.bin
+
+# Tool caches and tracking outputs
+.cache/
+wandb/
+mlruns/
