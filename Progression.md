@@ -18,15 +18,15 @@
   └── logs/
   ```
 - [ ] Başarılı model API erişimi test edildi (GPT-4 / Gemini / Claude vb.)
-- [ ] Temel model (M1) seçildi ve erişimi doğrulandı
+- [X] Temel model (M1) seçildi ve erişimi doğrulandı
 
 ---
 
 ## FAZ 1 — Veri Hazırlığı
 
-- [ ] GSM8K_TR veri seti indirildi
-- [ ] Veri setinin toplam soru sayısı kontrol edildi
-- [ ] Veri formatı standartlaştırıldı (soru, cevap, çözüm adımları)
+- [X] GSM8K_TR veri seti indirildi
+- [X] Veri setinin toplam soru sayısı kontrol edildi
+- [X] Veri formatı standartlaştırıldı (soru, cevap, çözüm adımları)
 - [ ] Test kümesi genel popülasyondan rastgele seçildi (≥ 500 soru)
 - [ ] Kalan sorular M1 değerlendirmesi için ayrıldı
 - [ ] Test kümesi ile kalan sorular arasında çakışma olmadığı doğrulandı
@@ -40,12 +40,12 @@
 
 > Eğitim kümesi = M1'in yanlış cevapladığı sorular (≥ 500 soru)
 
-- [ ] M1 modeli Faz 1'de ayrılan (test dışı) sorular üzerinde çalıştırıldı
-- [ ] M1'in her soru için doğru / yanlış cevap verdiği kaydedildi
-- [ ] M1'in çözemediği sorular filtrelendi
-- [ ] Yanlış cevaplanan soru sayısının ≥ 500 olduğu doğrulandı
-- [ ] Yanlış cevaplanan sorulardan ≥ 500 tanesi eğitim kümesi olarak seçildi → `data/train_failed.json`
-- [ ] M1 baseline başarı skoru hesaplandı ve kaydedildi → `logs/baseline.json`
+- [X] M1 modeli GSM8K_TR soruları üzerinde çalıştırıldı
+- [X] M1'in her soru için doğru / yanlış cevap verdiği kaydedildi → `data/m1_predictions.jsonl`
+- [X] M1'in çözemediği sorular filtrelendi
+- [X] Yanlış cevaplanan soru sayısının ≥ 500 olduğu doğrulandı (4085 soru)
+- [X] Yanlış cevaplanan sorular eğitim kümesi olarak seçildi → `data/train_failed.jsonl`
+- [X] M1 baseline başarı skoru hesaplandı ve kaydedildi → `logs/baseline.json`
 
 ---
 
