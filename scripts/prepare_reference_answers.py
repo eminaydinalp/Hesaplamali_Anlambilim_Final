@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from answer_utils import canonical_number, extract_last_number
+from answer_utils import canonical_number, extract_scalar_reference_answer, is_clock_time_target_answer
 
 
 def parse_args() -> argparse.Namespace:
@@ -40,11 +40,23 @@ def main() -> None:
     rows = read_jsonl(input_path)
     output_rows: list[dict[str, object]] = []
     parse_failures: list[dict[str, object]] = []
+    non_scalar_rows: list[dict[str, object]] = []
 
     for row in rows:
-        reference_answer_raw = extract_last_number(str(row.get("answer", "")))
+        answer_text = str(row.get("answer", ""))
+        is_non_scalar = is_clock_time_target_answer(answer_text)
+        reference_answer_raw = extract_scalar_reference_answer(answer_text)
         reference_answer = canonical_number(reference_answer_raw)
-        if reference_answer is None:
+        answer_type = "clock_time" if is_non_scalar else "scalar_numeric"
+        if is_non_scalar:
+            non_scalar_rows.append(
+                {
+                    "id": row.get("id"),
+                    "question": row.get("question"),
+                    "answer": row.get("answer"),
+                }
+            )
+        elif reference_answer is None:
             parse_failures.append(
                 {
                     "id": row.get("id"),
@@ -58,6 +70,7 @@ def main() -> None:
                 "id": row.get("id"),
                 "reference_answer_raw": reference_answer_raw,
                 "reference_answer": reference_answer,
+                "answer_type": answer_type,
             }
         )
 
@@ -68,9 +81,11 @@ def main() -> None:
         "output_path": str(output_path),
         "failures_path": str(failures_path),
         "total_rows": len(rows),
-        "parsed_rows": len(rows) - len(parse_failures),
+        "parsed_rows": len(rows) - len(parse_failures) - len(non_scalar_rows),
         "parse_failure_count": len(parse_failures),
+        "non_scalar_answer_count": len(non_scalar_rows),
         "parse_failure_ids": [str(row["id"]) for row in parse_failures[:50]],
+        "non_scalar_answer_ids": [str(row["id"]) for row in non_scalar_rows[:50]],
     }
 
     summary_path.parent.mkdir(parents=True, exist_ok=True)

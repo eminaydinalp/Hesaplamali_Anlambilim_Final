@@ -78,6 +78,35 @@ def load_existing_predictions(path: Path) -> dict[str, dict[str, object]]:
     return predictions
 
 
+def prediction_matches_current_row(
+    prediction: dict[str, object],
+    row: dict[str, object],
+) -> bool:
+    return (
+        str(prediction.get("source_id")) == str(row.get("source_id"))
+        and str(prediction.get("question", "")).strip()
+        == str(row.get("question", "")).strip()
+        and str(prediction.get("reference_answer_raw"))
+        == str(row.get("reference_answer_raw"))
+    )
+
+
+def drop_stale_predictions(
+    predictions_by_id: dict[str, dict[str, object]],
+    rows: list[dict[str, object]],
+) -> int:
+    rows_by_id = {str(row["id"]): row for row in rows}
+    stale_ids = [
+        row_id
+        for row_id, prediction in predictions_by_id.items()
+        if row_id not in rows_by_id
+        or not prediction_matches_current_row(prediction, rows_by_id[row_id])
+    ]
+    for row_id in stale_ids:
+        del predictions_by_id[row_id]
+    return len(stale_ids)
+
+
 def merge_test_rows(
     test_rows: list[dict[str, object]],
     reference_rows: list[dict[str, object]],
@@ -134,6 +163,7 @@ def write_outputs(
     model_id: str,
     device: str,
     started_at: float,
+    stale_existing_predictions: int,
 ) -> None:
     ordered_predictions = [
         predictions_by_id[str(row["id"])]
@@ -175,6 +205,7 @@ def write_outputs(
         "failed_rows": len(failed_rows),
         "error_rows": len(error_rows),
         "model_parse_failed_rows": len(model_parse_failed_rows),
+        "stale_existing_predictions": stale_existing_predictions,
         "accuracy": len(correct_rows) / len(scored_rows) if scored_rows else None,
         "predictions_output": str(predictions_output),
         "failed_output": str(failed_output),
@@ -203,6 +234,7 @@ def main() -> None:
     predictions_by_id = (
         {} if args.restart else load_existing_predictions(predictions_output)
     )
+    stale_existing_predictions = drop_stale_predictions(predictions_by_id, rows)
     pending_rows = [
         row for row in rows if str(row["id"]) not in predictions_by_id
     ]
@@ -266,6 +298,7 @@ def main() -> None:
                     model_id=args.model_id,
                     device=device,
                     started_at=started_at,
+                    stale_existing_predictions=stale_existing_predictions,
                 )
 
     write_outputs(
@@ -277,6 +310,7 @@ def main() -> None:
         model_id=args.model_id,
         device=device,
         started_at=started_at,
+        stale_existing_predictions=stale_existing_predictions,
     )
     print(summary_output.read_text(encoding="utf-8"))
 

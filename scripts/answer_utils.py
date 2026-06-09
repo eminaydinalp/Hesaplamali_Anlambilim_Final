@@ -7,8 +7,15 @@ from decimal import Decimal, InvalidOperation
 FINAL_ANSWER_RE = re.compile(
     r"(?im)^\s*final\s+cevap\s*:\s*(?P<answer>.+?)\s*$"
 )
-NUMBER_RE = re.compile(
-    r"(?<![\w/])[-+]?\d+(?:[.,\u00a0\u202f ]\d+)*(?:/\d+(?:[.,\u00a0\u202f ]\d+)*)?"
+CLOCK_TIME_PATTERN = r"(?<!\d)(?:[01]?\d|2[0-4]):[0-5]\d(?!\d)"
+NUMBER_PATTERN = (
+    r"(?<![\w/])[-+]?\d+(?:[.,\u00a0\u202f ]\d+)*"
+    r"(?:/\d+(?:[.,\u00a0\u202f ]\d+)*)?"
+)
+CLOCK_TIME_RE = re.compile(CLOCK_TIME_PATTERN)
+NUMBER_RE = re.compile(NUMBER_PATTERN)
+ANSWER_TOKEN_RE = re.compile(
+    rf"(?P<clock>{CLOCK_TIME_PATTERN})|(?P<number>{NUMBER_PATTERN})"
 )
 
 
@@ -21,6 +28,31 @@ def extract_last_number(text: str | None) -> str | None:
     return clean_number_text(matches[-1].group(0))
 
 
+def extract_last_answer_token(text: str | None) -> tuple[str, str] | None:
+    if not text:
+        return None
+
+    matches = list(ANSWER_TOKEN_RE.finditer(text))
+    if not matches:
+        return None
+
+    match = matches[-1]
+    if match.group("clock") is not None:
+        return "clock_time", match.group("clock")
+    return "number", clean_number_text(match.group("number"))
+
+
+def is_clock_time_target_answer(text: str | None) -> bool:
+    token = extract_last_answer_token(text)
+    return token is not None and token[0] == "clock_time"
+
+
+def extract_scalar_reference_answer(text: str | None) -> str | None:
+    if is_clock_time_target_answer(text):
+        return None
+    return extract_last_number(text)
+
+
 def extract_model_final_answer(text: str | None) -> str | None:
     if not text:
         return None
@@ -28,7 +60,10 @@ def extract_model_final_answer(text: str | None) -> str | None:
     final_answer_matches = list(FINAL_ANSWER_RE.finditer(text))
     if final_answer_matches:
         for match in reversed(final_answer_matches):
-            answer = extract_last_number(match.group("answer"))
+            answer_text = match.group("answer")
+            if is_clock_time_target_answer(answer_text):
+                return None
+            answer = extract_last_number(answer_text)
             if answer is not None:
                 return answer
 
@@ -36,7 +71,10 @@ def extract_model_final_answer(text: str | None) -> str | None:
     marker = "final cevap:"
     marker_index = lower_text.rfind(marker)
     if marker_index != -1:
-        return extract_last_number(text[marker_index + len(marker) :])
+        answer_text = text[marker_index + len(marker) :]
+        if is_clock_time_target_answer(answer_text):
+            return None
+        return extract_last_number(answer_text)
 
     return extract_last_number(text)
 

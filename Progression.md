@@ -29,8 +29,9 @@
 - [X] Veri formatı standartlaştırıldı (soru, cevap, çözüm adımları)
 - [X] Test kümesi genel popülasyondan rastgele seçildi (≥ 500 soru)
 - [X] Kalan sorular M1 değerlendirmesi için ayrıldı
-- [ ] Test kümesi ile kalan sorular arasında çakışma olmadığı doğrulandı
-- [X] Test kümesi `data/test.json` olarak kaydedildi
+- [X] Test kümesi ile kalan sorular arasında çakışma olmadığı doğrulandı
+- [X] Test kümesi `data/test.jsonl` olarak kaydedildi
+- [X] Numeric-only deney kapsamı için saat formatında final cevabı olan test örnekleri çıkarıldı / değiştirildi
 
 
 ---
@@ -48,21 +49,22 @@
 - [X] Yanlış cevaplanan soruların doğrulanması için gpt-oss-120b modeline api isteği gönderilerek doğrulanmış eğitim kümesi elde edildi (2578 soru)
 - [X] Doğrulanmış kümeden test kümesiyle çakışmayan nihai 500 eğitim sorusu seçildi → `data/train_final_500.jsonl`
 - [X] Nihai eğitim kümesi ile test kümesi arasında id ve soru metni çakışması olmadığı doğrulandı → `logs/final_train_selection_summary.json`
+- [X] Numeric-only deney kapsamı için saat formatında final cevabı olan eğitim örnekleri çıkarıldı / değiştirildi → `logs/numeric_only_repair_summary.json`
 
 ---
 
 ## FAZ 3 — Benzer Soru Üretimi
 
-- [ ] Başarılı model (Teacher Model) seçildi ve erişimi doğrulandı
+- [X] Başarılı model (Teacher Model) seçildi ve erişimi doğrulandı (`openai/gpt-oss-120b:free`)
 - [X] Her başarısız soru (q1, q2, …) için benzer soru üretme scripti yazıldı (`data/train_final_500.jsonl` kaynak alınarak)
-- [ ] Benzer sorular (q11, q22, …) üretildi
-- [ ] Üretilen sorular gözden geçirildi (kalite kontrolü):
-  - [ ] Konusu orijinal soruyla aynı mı?
-  - [ ] Sayılar / isimler değiştirilmiş mi?
-  - [ ] Zorluk seviyesi benzer mi?
-- [ ] Benzer sorular `data/similar_questions.jsonl` olarak kaydedildi
-- [ ] Teacher Model'den her başarısız soru için çözüm (r1, r2, …) alındı
-- [ ] Çözümler `data/solutions.jsonl` olarak kaydedildi
+- [X] Benzer sorular (q11, q22, …) üretildi (500/500 geçerli)
+- [X] Üretilen sorular gözden geçirildi (otomatik kalite kontrolü):
+  - [X] Orijinal soru metniyle birebir aynı soru yok
+  - [X] Orijinal final cevapla aynı final cevap yok
+  - [X] Duplicate, saat-cevap, cevap/çözüm mismatch veya parse hatası yok
+- [X] Benzer sorular `data/similar_questions.jsonl` olarak kaydedildi ve yeniden valide edildi → `logs/similar_questions_summary.json`
+- [X] Teacher Model'den her başarısız soru için çözüm (r1, r2, …) alındı
+- [X] Çözümler final eğitim kümesiyle hizalı olarak `data/solutions_final_500.jsonl` içinde kaydedildi
 
 ---
 
@@ -73,18 +75,19 @@
 - [X] Döngü scripti (`scripts/selective_loop.py`) yazıldı
 - [X] Checkpoint kaydetme / yükleme mekanizması implement edildi
 - [X] Her adım için log tutma mekanizması kuruldu (`logs/loop_log.csv`)
+- [X] Döngü girdileri 500 hizalı örnekle dry-run üzerinden doğrulandı
 
 **Döngü adımları (her qi için):**
 
 > qi zaten Faz 2'de başarısız olduğu bilinen sorulardır, tekrar test edilmez.
 
-- [ ] ri (Teacher çözümü) ile aktif model fine-tune edildi → yeni model oluşturuldu
-- [ ] Yeni model ile qii (benzer soru) test edildi
-- [ ] Sonuç loglandı:
+- [X] ri (Teacher çözümü) ile aktif model fine-tune edildi → yeni model oluşturuldu
+- [X] Yeni model ile qii (benzer soru) test edildi
+- [X] Sonuç loglandı:
     - Başarılıysa → yeni model aktif model oldu ✓
     - Başarısızsa → önceki aktif model korundu ✓
-- [ ] Tüm başarısız sorular için döngü tamamlandı
-- [ ] Her adımın sonucu `logs/loop_log.csv`'ye kaydedildi
+- [X] Tüm başarısız sorular için döngü tamamlandı (500 adım; 405 kabul, 95 ret)
+- [X] Her adımın sonucu `logs/loop_log.csv`'ye kaydedildi
 
 ---
 
@@ -92,23 +95,34 @@
 
 > Seçici strateji ile karşılaştırma için: her durumda M2 ile devam eden versiyon.
 
-- [ ] Kör strateji scripti (`scripts/blind_loop.py`) yazıldı
-- [ ] Aynı soru sırası ve aynı çözümler kullanıldı (adil karşılaştırma)
-- [ ] Kör strateji tüm başarısız sorular için çalıştırıldı
-- [ ] Sonuçlar `logs/blind_loop_log.csv`'ye kaydedildi
+- [X] Kör strateji scripti (`scripts/blind_loop.py`) yazıldı
+- [X] Aynı soru sırası ve aynı çözümler kullanıldı (adil karşılaştırma)
+- [X] Döngü girdileri 500 hizalı örnekle dry-run üzerinden doğrulandı
+- [X] Kör strateji tüm başarısız sorular için çalıştırıldı (500 adım; 389 benzer soru doğru, 111 yanlış)
+- [X] Sonuçlar `logs/blind_loop_log.csv`'ye kaydedildi
 
 ---
 
 ## FAZ 6 — Test Kümesi Değerlendirmesi
 
-- [ ] Seçici strateji sonucundaki final modeli test kümesinde değerlendirildi
-- [ ] Kör strateji sonucundaki final modeli test kümesinde değerlendirildi
-- [ ] M1 (baseline) test kümesinde değerlendirildi (referans nokta)
-- [ ] Her model için aşağıdaki metrikler hesaplandı:
-  - [ ] Genel doğruluk (accuracy)
-  - [ ] Başarısız sorular üzerindeki doğruluk
-  - [ ] Test kümesi genelleştirme skoru
-- [ ] Sonuçlar `results/evaluation.csv` olarak kaydedildi
+- [X] Seçici strateji sonucundaki final modeli test kümesinde değerlendirildi
+- [X] Kör strateji sonucundaki final modeli test kümesinde değerlendirildi
+- [X] M1 (baseline) test kümesinde değerlendirildi (referans nokta)
+- [X] Her model için aşağıdaki metrikler hesaplandı:
+  - [X] Genel doğruluk (accuracy)
+  - [X] Başarısız sorular üzerindeki doğruluk
+  - [X] Test kümesi genelleştirme skoru
+- [X] Sonuçlar `results/evaluation.csv` olarak kaydedildi
+
+**Faz 6 test sonuçları:**
+
+| Model | Doğru / 500 | Accuracy | M1'in yanlış yaptığı 210 test sorusunda doğru | M1'e göre net fark |
+|-------|-------------|----------|----------------------------------------------|--------------------|
+| M1 baseline | 290 | 0.580 | 0 | 0 |
+| Selective final adapter | 274 | 0.548 | 79 | -16 |
+| Blind final adapter | 296 | 0.592 | 85 | +6 |
+
+Not: Seçici strateji benzer soru testinde daha yüksek başarı göstermesine rağmen (`405/500 = 0.810`), sabit test kümesinde baseline'ın altında kaldı. Kör strateji benzer soru testinde daha düşük görünmesine rağmen (`389/500 = 0.778`), final test accuracy'de en iyi sonucu verdi.
 
 ---
 
@@ -136,4 +150,4 @@
 
 ---
 
-*Son güncelleme: 2026-06-05*
+*Son güncelleme: 2026-06-09*

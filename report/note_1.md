@@ -52,7 +52,13 @@ Accuracy: 0.58
 
 > Doğrulanmış veri kümesi tamamlandıktan sonra test kümesindeki örneklerin içerisinde olmadığı en az 500 soru seçeceğim. Bu nihai 500 soru eğitim kümemizi oluşturacak.
 
-# Eğitim Kümesinin Doğrulanması
+Saat formatındaki cevaplar eğitim ve test kümesinden çıkartılıp sadece sayısal cevaplar olacak şekilde ayarlandı.
+
+
+
+# Aşama 1 eğitimi
+
+source .venv/bin/activate && python scripts/selective_loop.py --restart --train-epochs 3 --learning-rate 2e-4 --weight-decay 0.0 --max-grad-norm 1.0 --lora-r 16 --lora-alpha 32 --lora-dropout 0.05 --max-train-tokens 1536 --max-input-tokens 1024 --max-new-tokens 256 --seed 42
 
 
 

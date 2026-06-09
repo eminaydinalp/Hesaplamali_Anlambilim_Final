@@ -151,6 +151,33 @@ Script `data/test.jsonl` içindeki `source_id` alanlarını `train-<source_id>` 
 - `data/solutions_final_500.jsonl`: aynı 500 soru için teacher çözümleri
 - `logs/final_train_selection_summary.json`: seçim ve overlap özeti
 
+## Numeric-Only Veri Tutarlılığı
+
+Bu deneyde evaluator tek bir skaler numeric cevabı karşılaştırır. Bu nedenle final cevabı saat formatında olan örnekler (`14:00`, `08:30` gibi) eğitim ve test kümelerinden çıkarılır; sorunun içinde saat geçmesi tek başına eleme sebebi değildir.
+
+Mevcut test ve final eğitim kümelerini minimum değişiklikle onarmak için:
+
+```bash
+source .venv/bin/activate
+python scripts/repair_numeric_only_sets.py --restart
+```
+
+Çıktılar:
+
+- `data/test.jsonl`: numeric-only sabit test kümesi
+- `data/test_with_reference_numeric.jsonl`: test kümesi için yeniden çıkarılmış numeric referanslar
+- `data/train_final_500.jsonl`: numeric-only nihai eğitim kümesi
+- `data/solutions_final_500.jsonl`: güncel eğitim kümesiyle hizalı teacher çözümleri
+- `logs/numeric_only_repair_summary.json`: çıkarılan ve yerine konan satırların özeti
+
+Eğitim kümesi değiştikten sonra mevcut benzer soru dosyasını API çağrısı yapmadan yeniden parse edip kompaktlaştırmak için:
+
+```bash
+python scripts/revalidate_similar_questions.py --restart
+```
+
+Bu işlem eski parser yüzünden hatalı görünen satırları kurtarır, artık kaynak eğitim kümesinde olmayan satırları düşürür ve yeniden üretilmesi gereken satırları `logs/similar_questions_revalidation_summary.json` içinde listeler.
+
 ## Benzer Soru Üretimi
 
 Nihai eğitim kümesi seçildikten sonra bu 500 soru için benzer soru üretmek için:
@@ -202,6 +229,37 @@ LoRA stratejisinde base model tekrar tekrar kaydedilmez. Diskte yalnızca seçic
 - `models/selective_loop/candidate_adapter_tmp`
 
 Her adım `logs/loop_log.csv` dosyasına yazılır. Resume bilgisi `logs/selective_loop_state.json`, özet bilgi `logs/selective_loop_summary.json` içindedir. Baştan başlatmak için `--restart` kullanın.
+
+## Faz 6 Test Değerlendirmesi
+
+Selective ve blind final adapter'larını sabit 500 soruluk test kümesinde değerlendirmek için:
+
+```bash
+source .venv/bin/activate
+python scripts/evaluate_phase6.py --strategy selective --restart --batch-size 4 --max-input-tokens 1024 --max-new-tokens 256
+python scripts/evaluate_phase6.py --strategy blind --restart --batch-size 4 --max-input-tokens 1024 --max-new-tokens 256
+python scripts/evaluate_phase6.py --strategy aggregate
+```
+
+`aggregate` modeli tekrar çalıştırmaz; baseline, selective ve blind özetlerini okuyup karşılaştırma tablosunu üretir.
+
+Çıktılar:
+
+- `data/test_selective_predictions.jsonl`
+- `data/test_selective_failed.jsonl`
+- `logs/selective_test_summary.json`
+- `data/test_blind_predictions.jsonl`
+- `data/test_blind_failed.jsonl`
+- `logs/blind_test_summary.json`
+- `results/evaluation.csv`
+
+Faz 6 sonucu:
+
+| Model | Doğru / 500 | Accuracy | M1'e göre net fark |
+|-------|-------------|----------|--------------------|
+| M1 baseline | 290 | 0.580 | 0 |
+| Selective final adapter | 274 | 0.548 | -16 |
+| Blind final adapter | 296 | 0.592 | +6 |
 
 ## Proje Fazları
 

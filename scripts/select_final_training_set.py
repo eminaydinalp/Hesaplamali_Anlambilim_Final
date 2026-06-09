@@ -8,6 +8,8 @@ from json import JSONDecodeError
 from pathlib import Path
 from typing import Any
 
+from answer_utils import is_clock_time_target_answer
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -146,6 +148,8 @@ def build_eligible_rows(
     excluded_by_test_source_id = 0
     excluded_by_test_question = 0
     excluded_by_empty_question = 0
+    excluded_by_non_scalar_answer = 0
+    non_scalar_answer_ids: list[str] = []
 
     for row in deduplicated_rows:
         row_id = str(row.get("id", "")).strip()
@@ -160,6 +164,10 @@ def build_eligible_rows(
         if question in test_question_texts:
             excluded_by_test_question += 1
             continue
+        if is_clock_time_target_answer(str(row.get("answer", ""))):
+            excluded_by_non_scalar_answer += 1
+            non_scalar_answer_ids.append(row_id)
+            continue
 
         eligible_rows.append(row)
 
@@ -171,6 +179,8 @@ def build_eligible_rows(
         "excluded_by_test_source_id": excluded_by_test_source_id,
         "excluded_by_test_question": excluded_by_test_question,
         "excluded_by_empty_question": excluded_by_empty_question,
+        "excluded_by_non_scalar_answer": excluded_by_non_scalar_answer,
+        "non_scalar_answer_ids": non_scalar_answer_ids[:50],
     }
     return eligible_rows, diagnostics
 

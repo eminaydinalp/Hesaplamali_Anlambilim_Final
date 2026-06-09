@@ -102,7 +102,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--max-input-tokens", type=int, default=1024)
     parser.add_argument("--max-train-tokens", type=int, default=1536)
-    parser.add_argument("--max-new-tokens", type=int, default=160)
+    parser.add_argument("--max-new-tokens", type=int, default=256)
     parser.add_argument("--train-epochs", type=int, default=3)
     parser.add_argument("--learning-rate", type=float, default=2e-4)
     parser.add_argument("--weight-decay", type=float, default=0.0)
@@ -690,6 +690,18 @@ def write_summary(
     summary = {
         "model_id": args.model_id,
         "dry_run": dry_run,
+        "train_epochs": args.train_epochs,
+        "learning_rate": args.learning_rate,
+        "weight_decay": args.weight_decay,
+        "max_grad_norm": args.max_grad_norm,
+        "max_train_tokens": args.max_train_tokens,
+        "max_input_tokens": args.max_input_tokens,
+        "max_new_tokens": args.max_new_tokens,
+        "lora_r": args.lora_r,
+        "lora_alpha": args.lora_alpha,
+        "lora_dropout": args.lora_dropout,
+        "lora_target_modules": args.lora_target_modules,
+        "seed": args.seed,
         "total_aligned_examples": len(examples),
         "pending_rows": len(examples) - counts["processed_rows"],
         "active_adapter_dir": str(active_adapter_dir),
