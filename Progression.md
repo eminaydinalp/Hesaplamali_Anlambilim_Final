@@ -27,12 +27,11 @@
 - [X] GSM8K_TR veri seti indirildi
 - [X] Veri setinin toplam soru sayısı kontrol edildi
 - [X] Veri formatı standartlaştırıldı (soru, cevap, çözüm adımları)
-- [ ] Test kümesi genel popülasyondan rastgele seçildi (≥ 500 soru)
-- [ ] Kalan sorular M1 değerlendirmesi için ayrıldı
+- [X] Test kümesi genel popülasyondan rastgele seçildi (≥ 500 soru)
+- [X] Kalan sorular M1 değerlendirmesi için ayrıldı
 - [ ] Test kümesi ile kalan sorular arasında çakışma olmadığı doğrulandı
-- [ ] Test kümesi `data/test.json` olarak kaydedildi
+- [X] Test kümesi `data/test.json` olarak kaydedildi
 
-> ⚠️ Not: Hocanın test kümesinin de yanlış cevaplananlardan seçilip seçilmeyeceğine dair cevabı bekleniyor. Cevap gelince bu faz güncellenecek.
 
 ---
 
@@ -46,21 +45,24 @@
 - [X] Yanlış cevaplanan soru sayısının ≥ 500 olduğu doğrulandı (4085 soru)
 - [X] Yanlış cevaplanan sorular eğitim kümesi olarak seçildi → `data/train_failed.jsonl`
 - [X] M1 baseline başarı skoru hesaplandı ve kaydedildi → `logs/baseline.json`
+- [X] Yanlış cevaplanan soruların doğrulanması için gpt-oss-120b modeline api isteği gönderilerek doğrulanmış eğitim kümesi elde edildi (2578 soru)
+- [X] Doğrulanmış kümeden test kümesiyle çakışmayan nihai 500 eğitim sorusu seçildi → `data/train_final_500.jsonl`
+- [X] Nihai eğitim kümesi ile test kümesi arasında id ve soru metni çakışması olmadığı doğrulandı → `logs/final_train_selection_summary.json`
 
 ---
 
 ## FAZ 3 — Benzer Soru Üretimi
 
 - [ ] Başarılı model (Teacher Model) seçildi ve erişimi doğrulandı
-- [ ] Her başarısız soru (q1, q2, …) için benzer soru üretme scripti yazıldı (`data/train_failed.json` kaynak alınarak)
+- [X] Her başarısız soru (q1, q2, …) için benzer soru üretme scripti yazıldı (`data/train_final_500.jsonl` kaynak alınarak)
 - [ ] Benzer sorular (q11, q22, …) üretildi
 - [ ] Üretilen sorular gözden geçirildi (kalite kontrolü):
   - [ ] Konusu orijinal soruyla aynı mı?
   - [ ] Sayılar / isimler değiştirilmiş mi?
   - [ ] Zorluk seviyesi benzer mi?
-- [ ] Benzer sorular `data/similar_questions.json` olarak kaydedildi
+- [ ] Benzer sorular `data/similar_questions.jsonl` olarak kaydedildi
 - [ ] Teacher Model'den her başarısız soru için çözüm (r1, r2, …) alındı
-- [ ] Çözümler `data/solutions.json` olarak kaydedildi
+- [ ] Çözümler `data/solutions.jsonl` olarak kaydedildi
 
 ---
 
@@ -68,9 +70,9 @@
 
 > Her soru için aşağıdaki döngü işletilir. Aktif model başlangıçta M1'dir.
 
-- [ ] Döngü scripti (`scripts/selective_loop.py`) yazıldı
-- [ ] Checkpoint kaydetme / yükleme mekanizması implement edildi
-- [ ] Her adım için log tutma mekanizması kuruldu (`logs/loop_log.csv`)
+- [X] Döngü scripti (`scripts/selective_loop.py`) yazıldı
+- [X] Checkpoint kaydetme / yükleme mekanizması implement edildi
+- [X] Her adım için log tutma mekanizması kuruldu (`logs/loop_log.csv`)
 
 **Döngü adımları (her qi için):**
 

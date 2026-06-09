@@ -34,5 +34,27 @@ Yanlış cevap: 4085
 Accuracy: 0.5341
 Atlanan referans parse edilemeyen soru: 24
 
-Bu yanlış cevapların bazıları muhtemelen gerçekte yanlış değil. Çünkü referans cevap olarak aldığımız cevaplarda yanlış olanlar var. O yüzden bu yanlış yapılan soruları başka bir llm' sorup ondan da cevap alacağım ve ondan gelen cevaplar ile referans cevap uyuşmasına rağmen qwen modelinin bu cevap ile uyuşmaması durumunda bu soruyu yanlış olarak kabul edeceğim. 
+Bu yanlış cevapların bazıları muhtemelen gerçekte yanlış değil. Çünkü referans cevap olarak aldığımız cevaplarda yanlış olanlar var. O yüzden bu yanlış yapılan soruları başka bir llm'e sorup ondan da cevap alacağım ve ondan gelen cevaplar ile referans cevap uyuşmasına rağmen qwen modelinin bu cevap ile uyuşmaması durumunda bu soruyu yanlış olarak kabul edeceğim. Bunun için openrouter ile gpt-oss-120b api sini kullanıp aynı prompt ile train_failed.jsonl dosyasındaki soruları gpt-oss-120b ye göndereceğim ve aynı dosya formatında ondan cevap alacağım. Bu sayade çözülemeyen soruların çözümünü başarılı bir modelden alma görevini de yapmış olacağız aslında. 
+
+Bu işlem için python scripts/evaluate_openrouter_teacher.py i yazdık. 
+
+
+
+# Test Değerlendirmesi
+
+Base modelin test.jsonl veri kümesindeki sonuçları:
+
+Model: Qwen/Qwen3.5-4B
+Test soru sayısı: 500
+Doğru: 290
+Yanlış: 210
+Accuracy: 0.58
+
+> Doğrulanmış veri kümesi tamamlandıktan sonra test kümesindeki örneklerin içerisinde olmadığı en az 500 soru seçeceğim. Bu nihai 500 soru eğitim kümemizi oluşturacak.
+
+# Eğitim Kümesinin Doğrulanması
+
+
+
+
 

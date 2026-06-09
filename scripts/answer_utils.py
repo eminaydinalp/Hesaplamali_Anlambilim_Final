@@ -8,7 +8,7 @@ FINAL_ANSWER_RE = re.compile(
     r"(?im)^\s*final\s+cevap\s*:\s*(?P<answer>.+?)\s*$"
 )
 NUMBER_RE = re.compile(
-    r"(?<![\w/])[-+]?(?:\d{1,3}(?:[.,\s]\d{3})+|\d+)(?:[.,]\d+)?(?:/\d+(?:[.,]\d+)?)?"
+    r"(?<![\w/])[-+]?\d+(?:[.,\u00a0\u202f ]\d+)*(?:/\d+(?:[.,\u00a0\u202f ]\d+)*)?"
 )
 
 
