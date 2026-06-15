@@ -116,26 +116,40 @@
 
 **Faz 6 test sonuçları:**
 
-| Model | Doğru / 500 | Accuracy | M1'in yanlış yaptığı 210 test sorusunda doğru | M1'e göre net fark |
+| Model | Doğru / 500 | Doğruluk | M1'in yanlış yaptığı 210 test sorusunda doğru | M1'e göre net fark |
 |-------|-------------|----------|----------------------------------------------|--------------------|
 | M1 baseline | 290 | 0.580 | 0 | 0 |
 | Selective final adapter | 274 | 0.548 | 79 | -16 |
 | Blind final adapter | 296 | 0.592 | 85 | +6 |
 
-Not: Seçici strateji benzer soru testinde daha yüksek başarı göstermesine rağmen (`405/500 = 0.810`), sabit test kümesinde baseline'ın altında kaldı. Kör strateji benzer soru testinde daha düşük görünmesine rağmen (`389/500 = 0.778`), final test accuracy'de en iyi sonucu verdi.
+Not: Seçici strateji benzer soru testinde daha yüksek başarı göstermesine rağmen (`405/500 = 0.810`), sabit test kümesinde baseline'ın altında kaldı. Kör strateji benzer soru testinde daha düşük görünmesine rağmen (`389/500 = 0.778`), final test doğruluğunda en iyi sonucu verdi.
 
 ---
 
 ## FAZ 7 — Analiz ve Raporlama
 
-- [ ] Seçici strateji vs. kör strateji karşılaştırma tablosu oluşturuldu
-- [ ] Araştırma sorusu yanıtlandı:
-  - [ ] "Bir sorunun çözümünü öğrenmek, benzer soruları çözmeyi sağlıyor mu?"
-  - [ ] "Seçici model güncelleme, kör güncellemeden daha mı iyi?"
-- [ ] Öğrenme eğrisi grafiği çizildi (adım sayısı vs. başarı)
-- [ ] Başarılı ve başarısız fine-tuning adımları analiz edildi
-- [ ] Sonuçlar `results/final_report.md` olarak yazıldı
-- [ ] Görseller `results/figures/` klasörüne kaydedildi
+- [X] Seçici strateji vs. kör strateji karşılaştırma tablosu oluşturuldu
+- [X] Araştırma sorusu yanıtlandı:
+  - [X] "Bir sorunun çözümünü öğrenmek, benzer soruları çözmeyi sağlıyor mu?"
+  - [X] "Seçici model güncelleme, kör güncellemeden daha mı iyi?"
+- [X] Öğrenme eğrisi grafiği çizildi (adım sayısı vs. başarı)
+- [X] Başarılı ve başarısız fine-tuning adımları analiz edildi
+- [X] Sonuçlar `results/final_report.md` olarak yazıldı
+- [X] Görseller `results/figures/` klasörüne kaydedildi
+
+**Faz 7 çıktıları:**
+
+- `scripts/analyze_phase7.py`
+- `results/final_report.md`
+- `results/phase7_analysis.json`
+- `results/figures/test_accuracy.svg`
+- `results/figures/similar_learning_curve.svg`
+- `results/figures/test_transitions.svg`
+- `results/figures/test_accuracy.png`
+- `results/figures/similar_learning_curve.png`
+- `results/figures/test_transitions.png`
+
+**Ana Faz 7 yorumu:** Teacher çözümüyle yapılan tek örneklik LoRA güncellemeleri lokal benzer soru başarısına çoğu zaman aktarım sağladı; ancak tek benzer soru üzerinden yapılan seçici kabul mekanizması final test genellemesini garanti etmedi. Bu deneyde final testte en iyi strateji blind oldu.
 
 ---
 
@@ -150,4 +164,4 @@ Not: Seçici strateji benzer soru testinde daha yüksek başarı göstermesine r
 
 ---
 
-*Son güncelleme: 2026-06-09*
+*Son güncelleme: 2026-06-10*

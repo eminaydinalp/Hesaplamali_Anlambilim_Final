@@ -62,5 +62,9 @@ source .venv/bin/activate && python scripts/selective_loop.py --restart --train-
 
 
 
+# Sunum 
+
+xdg-open /home/muhammet/Documents/Projects/Hesaplamali_Anlambilim_Final/sunum.html
+
 
 

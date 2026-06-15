@@ -255,12 +255,42 @@ python scripts/evaluate_phase6.py --strategy aggregate
 
 Faz 6 sonucu:
 
-| Model | Doğru / 500 | Accuracy | M1'e göre net fark |
+| Model | Doğru / 500 | Doğruluk | M1'e göre net fark |
 |-------|-------------|----------|--------------------|
 | M1 baseline | 290 | 0.580 | 0 |
 | Selective final adapter | 274 | 0.548 | -16 |
 | Blind final adapter | 296 | 0.592 | +6 |
 
+## Faz 7 Analiz ve Raporlama
+
+Final raporu ve figürleri yeniden üretmek için:
+
+```bash
+source .venv/bin/activate
+python scripts/analyze_phase7.py
+```
+
+PNG çıktıları için Pillow yüklü bir Python gerekir. Bu makinede sistem Python ile üretilebilir:
+
+```bash
+python3 scripts/analyze_phase7.py
+```
+
+Çıktılar:
+
+- `results/final_report.md`
+- `results/phase7_analysis.json`
+- `results/figures/test_accuracy.svg`
+- `results/figures/similar_learning_curve.svg`
+- `results/figures/test_transitions.svg`
+- `results/figures/test_accuracy.png`
+- `results/figures/similar_learning_curve.png`
+- `results/figures/test_transitions.png`
+
+Ana sonuç: Selective strateji benzer soru testinde daha iyi görünmesine rağmen final test setinde baseline'ın altında kaldı. Blind strateji final testte en iyi sonucu verdi.
+
 ## Proje Fazları
 
 Ayrıntılı iş takibi `Progression.md` dosyasındadır. Faz 0 ortam kurulumu ve temel klasör yapısını kapsar.
+
+
