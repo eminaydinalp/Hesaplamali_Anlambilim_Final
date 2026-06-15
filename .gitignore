@@ -45,3 +45,10 @@ logs/*
 .cache/
 wandb/
 mlruns/
+
+# Local report, presentation, archive, and rendered document files
+*.md
+*.pdf
+*.pptx
+*.zip
+*.html

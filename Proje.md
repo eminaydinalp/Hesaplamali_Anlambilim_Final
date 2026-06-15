@@ -1,2 +1,0 @@
-Çözüm Faydalı mı? Modelin çözemediği q1, q2, … Sorularını al. Soruların benzerlerini üret başarılı bir modele ürettir: q11, q22, … . Bir sorunun (q1) çözümünü başarılı bir modelden al = r1. r1 le, M1 modelini eğit=M2. M2, q11 i çözebiliyor mu? q1 in çözümünü öğrenmesi benzer bir soruyu çözmesini sağlıyor mu? Çözüyorsa M2 ile bir sonraki soruya geç. Çözemiyorsa M1 ile bir sonraki soruya geç. Bu süreci her 2 durumda da M2 ile sürece devam etmekle karşılaştır. Gsm8k_tr üzerinde oluşturacağınız eğitim ve test kümelerinin her biri en az 500 soru içermeli.
-
